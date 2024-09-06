@@ -163,8 +163,13 @@ class DeployModel(nn.Module):
 
         return nms_func
 
-    def forward(self, inputs: Tensor):
-        neck_outputs = self.baseModel(inputs)
+    def forward(self, img_inputs: Tensor, text_inputs:Tensor):
+        img_feats = self.baseModel.backbone.image_model(img_inputs)
+        # text_feats = self.baseModel.backbone.text_model(text_inputs)
+        neck_outputs = self.baseModel.neck(img_feats, text_inputs)
+        neck_outputs = self.baseModel.bbox_head(neck_outputs, text_inputs)
+
+        # neck_outputs = self.baseModel(img_inputs)
         if self.with_postprocess:
             return self.pred_by_feat(*neck_outputs)
         else:
@@ -181,7 +186,9 @@ class DeployModel(nn.Module):
                         outputs.append(torch.cat(feats, 1).permute(0, 2, 3, 1))
             else:
                 for feats in zip(*neck_outputs):
-                    outputs.append(torch.cat(feats, 1))
+                    output = [torch.tensor(feats[0], dtype=torch.float32).sigmoid(), feats[1]]
+                    outputs.append(output)
+                    # outputs.append(torch.cat(feats, 1))
             return tuple(outputs)
 
     @staticmethod

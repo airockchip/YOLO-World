@@ -115,6 +115,7 @@ def main():
     if args.add_padding:
         texts = texts + [' ']
 
+    args.device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
     baseModel = build_model_from_cfg(args.config, args.checkpoint, args.device)
     # reparameterize text into YOLO-World
     baseModel.reparameterize([texts])
@@ -122,10 +123,11 @@ def main():
         baseModel=baseModel, backend=backend, postprocess_cfg=postprocess_cfg)
     deploy_model.eval()
 
-    fake_input = torch.randn(args.batch_size, 3,
+    fake_img_input = torch.randn(args.batch_size, 3,
                              *args.img_size).to(args.device)
+    fake_text_input = torch.randn(baseModel.text_feats.shape).to(args.device)
     # dry run
-    deploy_model(fake_input)
+    deploy_model(fake_img_input, fake_text_input)
 
     save_onnx_path = os.path.join(
         args.work_dir,
@@ -134,9 +136,9 @@ def main():
     with BytesIO() as f:
         torch.onnx.export(
             deploy_model,
-            fake_input,
+            (fake_img_input, fake_text_input),
             f,
-            input_names=['images'],
+            input_names=('images', 'texts'),
             output_names=output_names,
             opset_version=args.opset)
         f.seek(0)

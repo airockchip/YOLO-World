@@ -90,7 +90,7 @@ class BNContrastiveHead(BaseModule):
     def forward(self, x: Tensor, w: Tensor) -> Tensor:
         """Forward function of contrastive learning."""
         x = self.norm(x)
-        w = F.normalize(w, dim=-1, p=2)
+        # w = F.normalize(w, dim=-1, p=2)
 
         if self.use_einsum:
             x = torch.einsum('bchw,bkc->bkhw', x, w)
