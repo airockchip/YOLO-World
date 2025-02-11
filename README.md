@@ -34,8 +34,14 @@
 
 We recommend that everyone **use English to communicate on issues**, as this helps developers from around the world discuss, share experiences, and answer questions together.
 
+For business licensing and other related inquiries, don't hesitate to contact `yixiaoge@tencent.com`.
+
 ## 🔥 Updates 
-`[2024-4-28]:` Long time no see! This update contains bugfixs and improvements: (1) ONNX demo; (2) image demo (support tensor input); (2) new pre-trained models; (3) image prompts; (4)simple version for fine-tuning / deployment; (5) guide for installation (include a `requirements.txt`).  
+`[2024-7-8]`: YOLO-World now has been integrated into [ComfyUI](https://github.com/StevenGrove/ComfyUI-YOLOWorld)! Come and try adding YOLO-World to your workflow now! You can access it at [StevenGrove/ComfyUI-YOLOWorld](https://github.com/StevenGrove/ComfyUI-YOLOWorld)!  
+`[2024-5-18]:` YOLO-World models have been [integrated with the FiftyOne computer vision toolkit](https://docs.voxel51.com/integrations/ultralytics.html#open-vocabulary-detection) for streamlined open-vocabulary inference across image and video datasets.  
+`[2024-5-16]:` Hey guys! Long time no see! This update contains (1) [fine-tuning guide](https://github.com/AILab-CVC/YOLO-World?#highlights--introduction) and (2) [TFLite Export](./docs/tflite_deploy.md) with INT8 Quantization.  
+`[2024-5-9]:` This update contains the real [`reparameterization`](./docs/reparameterize.md) 🪄, and it's better for fine-tuning on custom datasets and improves the training/inference efficiency 🚀!  
+`[2024-4-28]:` Long time no see! This update contains bugfixs and improvements: (1) ONNX demo; (2) image demo (support tensor input); (2) new pre-trained models; (3) image prompts; (4) simple version for fine-tuning / deployment; (5) guide for installation (include a `requirements.txt`).  
 `[2024-3-28]:` We provide: (1) more high-resolution pre-trained models (e.g., S, M, X) ([#142](https://github.com/AILab-CVC/YOLO-World/issues/142)); (2) pre-trained models with CLIP-Large text encoders. Most importantly, we preliminarily fix the **fine-tuning without `mask-refine`** and explore a new fine-tuning setting ([#160](https://github.com/AILab-CVC/YOLO-World/issues/160),[#76](https://github.com/AILab-CVC/YOLO-World/issues/76)). In addition, fine-tuning YOLO-World with `mask-refine` also obtains significant improvements, check more details in [configs/finetune_coco](./configs/finetune_coco/).  
 `[2024-3-16]:` We fix the bugs about the demo ([#110](https://github.com/AILab-CVC/YOLO-World/issues/110),[#94](https://github.com/AILab-CVC/YOLO-World/issues/94),[#129](https://github.com/AILab-CVC/YOLO-World/issues/129), [#125](https://github.com/AILab-CVC/YOLO-World/issues/125)) with visualizations of segmentation masks, and release [**YOLO-World with Embeddings**](./docs/prompt_yolo_world.md), which supports prompt tuning, text prompts and image prompts.  
 `[2024-3-3]:` We add the **high-resolution YOLO-World**, which supports `1280x1280` resolution with higher accuracy and better performance for small objects!  
@@ -78,10 +84,9 @@ This repo contains the PyTorch implementation, pre-trained weights, and pre-trai
 * YOLO-World presents a *prompt-then-detect* paradigm for efficient user-vocabulary inference, which re-parameterizes vocabulary embeddings as parameters into the model and achieve superior inference speed. You can try to export your own detection model without extra training or fine-tuning in our [online demo](https://huggingface.co/spaces/stevengrove/YOLO-World)!
 
 
-<center>
+<div align="center">
 <img width=800px src="./assets/yolo_arch.png">
-</center>
-
+</div>
 ## Model Zoo
 
 We've pre-trained YOLO-World-S/M/L from scratch and evaluate on the `LVIS val-1.0` and `LVIS minival`. We provide the pre-trained model weights and training logs for applications/research or re-producing the results.
@@ -170,12 +175,40 @@ chmod +x tools/dist_test.sh
 
 ## Fine-tuning YOLO-World
 
-We provide the details about fine-tuning YOLO-World in [docs/fine-tuning](./docs/finetuning.md).
+<div align="center">
+<img src="./assets/finetune_yoloworld.png" width=800px>
+</div>
+
+
+<div align="center">
+<b><p>Chose your pre-trained YOLO-World and Fine-tune it!</p></b> 
+</div>
+
+
+YOLO-World supports **zero-shot inference**, and three types of **fine-tuning recipes**: **(1) normal fine-tuning**, **(2) prompt tuning**, and **(3) reparameterized fine-tuning**.
+
+* Normal Fine-tuning: we provide the details about fine-tuning YOLO-World in [docs/fine-tuning](./docs/finetuning.md).
+
+* Prompt Tuning: we provide more details ahout prompt tuning in [docs/prompt_yolo_world](./docs/prompt_yolo_world.md).
+
+* Reparameterized Fine-tuning: the reparameterized YOLO-World is more suitable for specific domains far from generic scenes. You can find more details in [docs/reparameterize](./docs/reparameterize.md).
 
 ## Deployment
 
 We provide the details about deployment for downstream applications in [docs/deployment](./docs/deploy.md).
 You can directly download the ONNX model through the online [demo](https://huggingface.co/spaces/stevengrove/YOLO-World) in Huggingface Spaces 🤗.
+
+- [x] ONNX export and demo: [docs/deploy](https://github.com/AILab-CVC/YOLO-World/blob/master/docs/deploy.md)
+- [x] TFLite and INT8 Quantization: [docs/tflite_deploy](https://github.com/AILab-CVC/YOLO-World/blob/master/docs/tflite_deploy.md)
+- [ ] TensorRT: coming soon.
+- [ ] C++: coming soon.
+
+## RKNN Deployment
+Regarding the deployment of RKNN and the export of ONNX models, convert RKNN model and demo， please refer:
+
+[RKNN_README_CN.md](RKNN_README_CN.md)
+
+[RKNN_README_EN.md](RKNN_README_EN.md)
 
 ## Demo
 
@@ -205,4 +238,4 @@ If you find YOLO-World is useful in your research or applications, please consid
 ```
 
 ## Licence
-YOLO-World is under the GPL-v3 Licence and is supported for comercial usage.
+YOLO-World is under the GPL-v3 Licence and is supported for commercial usage. If you need a commercial license for YOLO-World, please feel free to contact us.
